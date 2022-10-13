@@ -1045,7 +1045,24 @@ class Message extends Base {
    * @param {MessageButton|string} button Button ID
    * @returns {Promise<InteractionResponse>}
    */
-  clickButton(button) {
+  clickButtonEmoji(button) {
+    let buttonEmoji;
+    if (button instanceof MessageButton) button = button.emoji;
+    if (typeof button === 'string') buttonEmoji = button;
+    if (!buttonEmoji) {
+      throw new TypeError('BUTTON_ID_NOT_STRING');
+    }
+    if (!this.components[0]) throw new TypeError('MESSAGE_NO_COMPONENTS');
+    for (const components of this.components) {
+      for (const interactionComponent of components.components) {
+        if (interactionComponent.type == 'BUTTON' && interactionComponent.emoji == buttonEmoji) {
+          return interactionComponent.click(this);
+        }
+      }
+    }
+    throw new TypeError('BUTTON_NOT_FOUND');
+  }
+  clickButtonID(button) {
     let buttonID;
     if (button instanceof MessageButton) button = button.customId;
     if (typeof button === 'string') buttonID = button;
@@ -1056,6 +1073,40 @@ class Message extends Base {
     for (const components of this.components) {
       for (const interactionComponent of components.components) {
         if (interactionComponent.type == 'BUTTON' && interactionComponent.customId == buttonID) {
+          return interactionComponent.click(this);
+        }
+      }
+    }
+    throw new TypeError('BUTTON_NOT_FOUND');
+  }
+  clickButtonStyle(button) {
+    let buttonStyle;
+    if (button instanceof MessageButton) button = button.style;
+    if (typeof button === 'string') buttonStyle = button;
+    if (!buttonStyle) {
+      throw new TypeError('BUTTON_ID_NOT_STRING');
+    }
+    if (!this.components[0]) throw new TypeError('MESSAGE_NO_COMPONENTS');
+    for (const components of this.components) {
+      for (const interactionComponent of components.components) {
+        if (interactionComponent.type == 'BUTTON' && interactionComponent.style== buttonStyle) {
+          return interactionComponent.click(this);
+        }
+      }
+    }
+    throw new TypeError('BUTTON_NOT_FOUND');
+  }
+  clickButtonLabel(button) {
+    let buttonLabel;
+    if (button instanceof MessageButton) button = button.label;
+    if (typeof button === 'string') buttonLabel = button;
+    if (!buttonLabel) {
+      throw new TypeError('BUTTON_ID_NOT_STRING');
+    }
+    if (!this.components[0]) throw new TypeError('MESSAGE_NO_COMPONENTS');
+    for (const components of this.components) {
+      for (const interactionComponent of components.components) {
+        if (interactionComponent.type == 'BUTTON' && interactionComponent.label == buttonLabel) {
           return interactionComponent.click(this);
         }
       }
